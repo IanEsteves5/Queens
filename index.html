@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Queens</title>
+
+</head>
+
+<body>
+
+    <div style="width:240px;position:absolute;left:10px;top:10px;">
+        Queens - Genetic Algorithm<br />
+        <input id="numberOfBoards" type="range" min="2" max="20" value="6" onchange="beginAlgorithm();" /><br />
+        <input type="button" value="Step" onclick="advanceAlgorithm();" />
+    </div>
+
+    <div style="position:absolute;left:10px;top:100px;">
+        Results<br />
+        <div id="divBoards"></div>
+    </div>
+
+    <script src="resources/javascript/queens.js"></script>
+
+    <script>
+        var queenPositionList = [];
+
+        var divBoards = document.getElementById("divBoards");
+        
+        var boardDivInitialHeight = 25;
+        
+        var boardDivHeight = 250;
+        
+        var boardDivWidth = 250;
+        
+        var maxBoardsPerRow = Math.floor(window.innerWidth/boardDivWidth);
+
+        beginAlgorithm = function() {
+            queenPositionList = [];
+            var n = document.getElementById("numberOfBoards").value;
+            for(var i = 0 ; i < n ; i++) {
+                queenPositionList.push(new queensPosition());
+            }
+            orderListOfPositions(queenPositionList);
+            drawWindow();
+        };
+
+        advanceAlgorithm = function() {
+            var newList = geneticAlgorithm(queenPositionList);
+            queenPositionList = newList;
+            drawWindow();
+        };
+
+        drawWindow = function() {
+            var newContent = "";
+            
+            for(var i = 0 ; i < queenPositionList.length ; i++) {
+                var currentLeft = boardDivWidth*(i%maxBoardsPerRow);
+                var currentTop = boardDivInitialHeight + boardDivHeight*(Math.floor(i/maxBoardsPerRow));
+                newContent += "<div style='width:"+ boardDivWidth +"px;position:absolute;left:"+ currentLeft +"px;top:"+ currentTop +"px;'>";
+                newContent += queenPositionList[i].info();
+                newContent += "<br />";
+                newContent += queenPositionList[i].diagram();
+                newContent += "</div>";
+            }
+            
+            divBoards.innerHTML = newContent;
+        };
+
+        window.onload = function() {
+            if (maxBoardsPerRow < 1) {
+                maxBoardsPerRow = 1;
+            }
+            beginAlgorithm();
+        };
+        
+        window.onresize = function() {
+            var newMaxRows = Math.floor(window.innerWidth/boardDivWidth);
+            if (newMaxRows < 1) {
+                newMaxRows = 1;
+            }
+            if(newMaxRows !== maxBoardsPerRow) {
+                maxBoardsPerRow = newMaxRows;
+                drawWindow();
+            }
+        };
+
+    </script>
+
+</body>
+    
+</html>
